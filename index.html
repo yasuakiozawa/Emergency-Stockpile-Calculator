@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療機関向け アルコール手指消毒剤 備蓄量算定ツール</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter / Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+    </style>
+</head>
+<body class="h-full text-slate-700 flex flex-col">
+
+    <header class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20">
+                    <i class="fa-solid fa-pump-medical text-2xl text-blue-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">医療機関向け アルコール手指消毒剤 備蓄量算定ツール</h1>
+                    <p class="text-xs sm:text-sm text-blue-100 font-medium mt-0.5">災害・感染症流行時に備えた、アルコール手指消毒剤の備蓄計画を支援します</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-6">
+
+        <!-- Info Banner / Guidelines Note (Top Position) -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl custom-shadow">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 pt-0.5">
+                    <i class="fa-solid fa-circle-info text-blue-600 text-lg"></i>
+                </div>
+                <div class="ml-3">
+                    <div class="text-xs sm:text-sm text-blue-900 space-y-3">
+                        <p class="leading-relaxed">本ツールは、医療機関における病床数、外来患者数、職員数、手指衛生の実施回数などをもとに、アルコール手指消毒剤の使用量と、設定した日数分の必要備蓄量を試算するツールです。<br>
+平常時の使用量を基礎として、災害による断水・物流の停滞や、新興感染症の流行などを想定した備蓄計画の検討にご活用いただけます。<br>
+施設の実情や使用実績に応じて各条件を設定し、必要備蓄量の把握や備蓄計画の検討にお役立てください。</p>
+                        
+                        <div class="bg-white/80 p-3 rounded-lg border border-blue-200/60 text-slate-700">
+                            <p class="font-bold text-blue-900 mb-1">【ご利用にあたって】</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs">
+                                <li>算定結果は、入力条件に基づく試算値です。</li>
+                                <li>アルコール手指消毒剤について、国が一律に定めた備蓄日数・備蓄量を示すものではありません。</li>
+                                <li>備蓄日数や需要の増加率は、施設の診療機能、感染対策方針、災害想定、供給体制などを踏まえて設定してください。</li>
+                                <li>手指衛生は、アルコール手指消毒剤だけで全ての場面に対応できるものではありません。石けんと流水による手洗いが必要な場面も考慮してください。</li>
+                            </ul>
+                        </div>
+
+                        <p class="text-[11px] text-blue-800 italic">※本ツールは備蓄計画の検討を支援するものであり、感染対策上の判断や施設ごとの備蓄計画に代わるものではありません。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            
+            <!-- INPUT COLUMN -->
+            <div class="space-y-6">
+                
+                <!-- SECTION 1: Scenario & Stockpile Days -->
+                <section class="bg-white rounded-2xl p-5 sm:p-6 custom-shadow border border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center mb-4">
+                        <span class="flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-700 rounded-lg text-sm mr-2.5 font-bold">1</span>
+                        想定シナリオ・備蓄日数の設定
+                    </h2>
+
+                    <div class="mb-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-600 space-y-2">
+                        <div>
+                            <p class="font-bold text-slate-800 mb-1">想定シナリオ</p>
+                            <ul class="list-disc list-inside space-y-0.5 text-slate-600">
+                                <li>災害・ライフライン停止</li>
+                                <li>新興感染症・パンデミック</li>
+                                <li>施設独自の想定</li>
+                            </ul>
+                        </div>
+                        <div class="pt-1.5 border-t border-slate-200/60">
+                            <p class="font-bold text-slate-800 mb-1">備蓄設定日数 (日)</p>
+                            <p class="leading-relaxed">備蓄計画の目標とする日数を入力してください。災害時の断水・物流停止の想定や、感染症流行時の需要、調達の見通しなどを踏まえ、施設ごとに設定してください。<br>
+                            <span class="text-slate-500 italic">※選択したシナリオだけで、国が推奨する備蓄日数が決まるものではありません。</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">想定するシナリオ</label>
+                            <select id="disasterType" onchange="updateDefaultDays()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option value="earthquake">災害・ライフライン停止</option>
+                                <option value="pandemic" selected>新興感染症・パンデミック</option>
+                                <option value="custom">施設独自の想定</option>
+                            </select>
+                            <p id="scenarioReferenceText" class="text-[11px] text-slate-500 mt-1.5 font-medium bg-slate-50 p-2 rounded border border-slate-200/60">
+                                参考：PPEは使用量2か月分以上（アルコール手指消毒剤には直接適応されません）
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">備蓄設定日数 (日)</label>
+                            <input type="number" id="stockpileDays" value="60" min="1" max="365" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Scenario Notes -->
+                    <div id="scenarioNotesContainer" class="mt-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-700 space-y-1.5">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- SECTION 2: Bed Categories -->
+                <section class="bg-white rounded-2xl p-5 sm:p-6 custom-shadow border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                            <span class="flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-700 rounded-lg text-sm mr-2.5 font-bold">2</span>
+                            病床区分別の使用量設定
+                        </h2>
+                    </div>
+
+                    <div class="mb-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-600 space-y-2">
+                        <p class="leading-relaxed">病床数、稼働率、患者1人あたりの手指衛生実施回数を入力してください。<br>
+                        手指衛生実施回数は、施設の実績データや感染対策上の運用を参考に設定してください。病棟の特性やケア内容によって実施頻度は異なります。<br>
+                        <span class="text-amber-700 font-medium">※医療従事者の患者ケアにおける使用回数を入力してください</span></p>
+                    </div>
+
+                    <!-- Bed Category Add Buttons -->
+                    <div class="flex flex-wrap items-center gap-2 mb-4 border-b border-slate-200 pb-2" id="bedTabsContainer">
+                        <button type="button" id="addGenBtn" onclick="addBedCategory('gen')" class="px-3 py-1.5 rounded-lg text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> 一般急性期病床を設定する
+                        </button>
+                        <button type="button" id="addIcuBtn" onclick="addBedCategory('icu')" class="px-3 py-1.5 rounded-lg text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> ICU / HCU / 高度治療室を設定する
+                        </button>
+                        <button type="button" id="addChrBtn" onclick="addBedCategory('chr')" class="px-3 py-1.5 rounded-lg text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> 療養・精神・回復期等を設定する
+                        </button>
+                        <button type="button" id="addOthBtn" onclick="addBedCategory('oth')" class="px-3 py-1.5 rounded-lg text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> その他の病床区分を設定する
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- General Acute (Hidden by default) -->
+                        <div id="genBedBlock" class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold text-slate-800 text-sm">一般急性期病床（床）</div>
+                                <button type="button" onclick="removeBedCategory('gen')" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                    <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">許可病床数 (床)</label>
+                                    <input type="number" id="genBeds" value="" placeholder="例: 200" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">想定病床稼働率 (%)</label>
+                                    <input type="number" id="genRate" value="" placeholder="例: 80" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">患者1人あたりの手指衛生実施回数（回/人・日）</label>
+                                    <input type="number" id="genOps" value="" placeholder="例: 15" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ICU / HCU (Hidden by default) -->
+                        <div id="icuBedBlock" class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold text-slate-800 text-sm">ICU / HCU / 高度治療室（床）</div>
+                                <button type="button" onclick="removeBedCategory('icu')" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                    <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">許可病床数 (床)</label>
+                                    <input type="number" id="icuBeds" value="" placeholder="例: 20" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">想定病床稼働率 (%)</label>
+                                    <input type="number" id="icuRate" value="" placeholder="例: 85" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">患者1人あたりの手指衛生実施回数（回/人・日）</label>
+                                    <input type="number" id="icuOps" value="" placeholder="例: 20" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chronic / Recovery (Hidden by default) -->
+                        <div id="chrBedBlock" class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold text-slate-800 text-sm">療養・精神・回復期等（床）</div>
+                                <button type="button" onclick="removeBedCategory('chr')" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                    <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">許可病床数 (床)</label>
+                                    <input type="number" id="chrBeds" value="" placeholder="例: 100" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">想定病床稼働率 (%)</label>
+                                    <input type="number" id="chrRate" value="" placeholder="例: 90" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">患者1人あたりの手指衛生実施回数（回/人・日）</label>
+                                    <input type="number" id="chrOps" value="" placeholder="例: 8" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Other Bed Category (Hidden by default) -->
+                        <div id="othBedBlock" class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="w-full max-w-xs">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">病床区分名</label>
+                                    <input type="text" id="othBedName" value="その他病床" placeholder="その他病床" onchange="calculateStockpile()" class="w-full text-sm font-bold text-slate-800 bg-white rounded border-slate-300 border px-2 py-1">
+                                </div>
+                                <button type="button" onclick="removeBedCategory('oth')" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                    <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">許可病床数 (床)</label>
+                                    <input type="number" id="othBeds" value="" placeholder="例: 50" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">想定病床稼働率 (%)</label>
+                                    <input type="number" id="othRate" value="" placeholder="例: 80" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">患者1人あたりの手指衛生実施回数（回/人・日）</label>
+                                    <input type="number" id="othOps" value="" placeholder="例: 10" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: Outpatient -->
+                <section class="bg-white rounded-2xl p-5 sm:p-6 custom-shadow border border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center mb-4">
+                        <span class="flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-700 rounded-lg text-sm mr-2.5 font-bold">3</span>
+                        外来部門の使用量設定
+                    </h2>
+                    <div class="mb-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-600 space-y-2">
+                        <p class="leading-relaxed">1日あたりの外来患者数と、外来部門で発生する手指衛生の実施回数を入力してください。<br>
+                        医療従事者による診療・ケア時の手指衛生と、外来患者による手指衛生を分けて設定します。</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">1日平均 外来患者数 (人)</label>
+                            <input type="number" id="outpatientCount" value="" placeholder="例: 500" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">患者1人あたりの来院時手指消毒回数</label>
+                            <input type="number" id="outpatientEntryOps" value="" placeholder="例: 1" min="0" step="0.5" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">患者1人あたりに対するケア時の手指消毒回数</label>
+                            <input type="number" id="outpatientCareOps" value="" placeholder="例: 2" min="0" step="0.5" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: Non-care Staff -->
+                <section class="bg-white rounded-2xl p-5 sm:p-6 custom-shadow border border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center mb-4">
+                        <span class="flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-700 rounded-lg text-sm mr-2.5 font-bold">4</span>
+                        職員によるその他の手指衛生
+                    </h2>
+                    <div class="mb-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-600 space-y-2">
+                        <p class="leading-relaxed">対象職員数と職員1人あたりの1日の手指衛生実施回数を入力してください。<br>
+                        <span class="text-amber-700 font-medium">※病棟・外来での患者ケア以外の日常動作（出社・退社時、出入口移動、食事前後、トイレ後、事務作業・書類取扱い時等）での使用回数を入力してください</span></p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">対象職員数（人）</label>
+                            <input type="number" id="staffCount" value="" placeholder="例: 400" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">1人1日あたりの日常手指消毒回数 (回)</label>
+                            <input type="number" id="staffOps" value="" placeholder="例: 5" min="0" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 5: Alcohol Products Parameters -->
+                <section class="bg-white rounded-2xl p-5 sm:p-6 custom-shadow border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                            <span class="flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-700 rounded-lg text-sm mr-2.5 font-bold">5</span>
+                            アルコール手指消毒剤の設定
+                        </h2>
+                        <span id="ratioTotalBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">購入割合合計: 100%</span>
+                    </div>
+
+                    <div class="mb-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-600 space-y-2">
+                        <p class="leading-relaxed">対象とする製品と1回使用量、容量を選択・入力してください。<br>
+                        複数製品を使用されている場合は、製品ごとの購入割合を設定します。購入割合合計が100％になるようにしてください。<br>
+                        <span class="text-amber-700 font-medium">※ご使用のアルコール手指消毒剤の1回使用量（mL）など、製品の仕様や採用状況に応じて、登録情報を設定してください。</span></p>
+                    </div>
+
+                    <!-- Tabs Container -->
+                    <div class="flex flex-wrap items-center gap-2 mb-4 border-b border-slate-200 pb-2" id="productTabsContainer">
+                        <!-- Tab buttons dynamically handled/styled in JS -->
+                    </div>
+
+                    <div class="space-y-4" id="productsContainer">
+                        <!-- Product 1 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3" data-product-id="1">
+                            <div class="flex justify-between items-center">
+                                <div class="w-full max-w-xs">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">製品名</label>
+                                    <input type="text" id="p1Name" value="製品1" onchange="calculateStockpile()" class="w-full text-sm font-bold text-slate-800 bg-white rounded border-slate-300 border px-2 py-1">
+                                </div>
+                                <span class="text-xs text-blue-600 font-medium">製品 1</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">製品タイプ・1回使用量</label>
+                                    <select id="p1Type" onchange="toggleCustomInput(1); calculateStockpile();" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="3.0">液剤（1プッシュ 3.0mL）</option>
+                                        <option value="1.5">ジェル剤（1プッシュ 1.5mL）</option>
+                                        <option value="1.2">泡剤（1プッシュ 1.2mL）</option>
+                                        <option value="custom">その他（カスタム入力）</option>
+                                    </select>
+                                    <div id="p1CustomContainer" class="hidden mt-2">
+                                        <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">カスタム 1回使用量 (mL)</label>
+                                        <input type="number" id="p1CustomVal" value="2.0" step="0.1" min="0.1" onchange="calculateStockpile()" class="w-full text-xs rounded border-slate-300 border px-2 py-1">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">1本あたりの容量 (mL)</label>
+                                    <input type="number" id="p1Volume" value="1000" min="1" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">使用・購入割合 (%)</label>
+                                    <input type="number" id="p1Ratio" value="100" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3 hidden" data-product-id="2">
+                            <div class="flex justify-between items-center">
+                                <div class="w-full max-w-xs">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">製品名</label>
+                                    <input type="text" id="p2Name" value="製品2" onchange="calculateStockpile()" class="w-full text-sm font-bold text-slate-800 bg-white rounded border-slate-300 border px-2 py-1">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-blue-600 font-medium">製品 2</span>
+                                    <button type="button" onclick="removeProduct(2)" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">製品タイプ・1回使用量</label>
+                                    <select id="p2Type" onchange="toggleCustomInput(2); calculateStockpile();" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="3.0">液剤（1プッシュ 3.0mL）</option>
+                                        <option value="1.5">ジェル剤（1プッシュ 1.5mL）</option>
+                                        <option value="1.2" selected>泡剤（1プッシュ 1.2mL）</option>
+                                        <option value="custom">その他（カスタム入力）</option>
+                                    </select>
+                                    <div id="p2CustomContainer" class="hidden mt-2">
+                                        <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">カスタム 1回使用量 (mL)</label>
+                                        <input type="number" id="p2CustomVal" value="1.0" step="0.1" min="0.1" onchange="calculateStockpile()" class="w-full text-xs rounded border-slate-300 border px-2 py-1">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">1本あたりの容量 (mL)</label>
+                                    <input type="number" id="p2Volume" value="500" min="1" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">使用・購入割合 (%)</label>
+                                    <input type="number" id="p2Ratio" value="0" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3 hidden" data-product-id="3">
+                            <div class="flex justify-between items-center">
+                                <div class="w-full max-w-xs">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">製品名</label>
+                                    <input type="text" id="p3Name" value="製品3" onchange="calculateStockpile()" class="w-full text-sm font-bold text-slate-800 bg-white rounded border-slate-300 border px-2 py-1">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-blue-600 font-medium">製品 3</span>
+                                    <button type="button" onclick="removeProduct(3)" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">製品タイプ・1回使用量</label>
+                                    <select id="p3Type" onchange="toggleCustomInput(3); calculateStockpile();" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="3.0">液剤（1プッシュ 3.0mL）</option>
+                                        <option value="1.5" selected>ジェル剤（1プッシュ 1.5mL）</option>
+                                        <option value="1.2">泡剤（1プッシュ 1.2mL）</option>
+                                        <option value="custom">その他（カスタム入力）</option>
+                                    </select>
+                                    <div id="p3CustomContainer" class="hidden mt-2">
+                                        <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">カスタム 1回使用量 (mL)</label>
+                                        <input type="number" id="p3CustomVal" value="2.0" step="0.1" min="0.1" onchange="calculateStockpile()" class="w-full text-xs rounded border-slate-300 border px-2 py-1">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">1本あたりの容量 (mL)</label>
+                                    <input type="number" id="p3Volume" value="500" min="1" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">使用・購入割合 (%)</label>
+                                    <input type="number" id="p3Ratio" value="0" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3 hidden" data-product-id="4">
+                            <div class="flex justify-between items-center">
+                                <div class="w-full max-w-xs">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">製品名</label>
+                                    <input type="text" id="p4Name" value="製品4" onchange="calculateStockpile()" class="w-full text-sm font-bold text-slate-800 bg-white rounded border-slate-300 border px-2 py-1">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-blue-600 font-medium">製品 4</span>
+                                    <button type="button" onclick="removeProduct(4)" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">製品タイプ・1回使用量</label>
+                                    <select id="p4Type" onchange="toggleCustomInput(4); calculateStockpile();" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="3.0">液剤（1プッシュ 3.0mL）</option>
+                                        <option value="1.5">ジェル剤（1プッシュ 1.5mL）</option>
+                                        <option value="1.2">泡剤（1プッシュ 1.2mL）</option>
+                                        <option value="custom" selected>その他（カスタム入力）</option>
+                                    </select>
+                                    <div id="p4CustomContainer" class="mt-2">
+                                        <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">カスタム 1回使用量 (mL)</label>
+                                        <input type="number" id="p4CustomVal" value="2.5" step="0.1" min="0.1" onchange="calculateStockpile()" class="w-full text-xs rounded border-slate-300 border px-2 py-1">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">1本あたりの容量 (mL)</label>
+                                    <input type="number" id="p4Volume" value="250" min="1" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">使用・購入割合 (%)</label>
+                                    <input type="number" id="p4Ratio" value="0" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 5 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3 hidden" data-product-id="5">
+                            <div class="flex justify-between items-center">
+                                <div class="w-full max-w-xs">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">製品名</label>
+                                    <input type="text" id="p5Name" value="製品5" onchange="calculateStockpile()" class="w-full text-sm font-bold text-slate-800 bg-white rounded border-slate-300 border px-2 py-1">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-blue-600 font-medium">製品 5</span>
+                                    <button type="button" onclick="removeProduct(5)" class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>削除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">製品タイプ・1回使用量</label>
+                                    <select id="p5Type" onchange="toggleCustomInput(5); calculateStockpile();" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="3.0">液剤（1プッシュ 3.0mL）</option>
+                                        <option value="1.5">ジェル剤（1プッシュ 1.5mL）</option>
+                                        <option value="1.2">泡剤（1プッシュ 1.2mL）</option>
+                                        <option value="custom">その他（カスタム入力）</option>
+                                    </select>
+                                    <div id="p5CustomContainer" class="hidden mt-2">
+                                        <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">カスタム 1回使用量 (mL)</label>
+                                        <input type="number" id="p5CustomVal" value="2.0" step="0.1" min="0.1" onchange="calculateStockpile()" class="w-full text-xs rounded border-slate-300 border px-2 py-1">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">1本あたりの容量 (mL)</label>
+                                    <input type="number" id="p5Volume" value="500" min="1" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">使用・購入割合 (%)</label>
+                                    <input type="number" id="p5Ratio" value="0" min="0" max="100" onchange="calculateStockpile()" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- OUTPUT COLUMN (Sticky right on large screens) -->
+            <div class="space-y-6 lg:sticky lg:top-6">
+                
+                <!-- SUMMARY CARD -->
+                <div class="bg-slate-900 text-white rounded-2xl p-6 custom-shadow space-y-6">
+                    <div class="border-b border-slate-800 pb-4 flex justify-between items-center">
+                        <h2 class="text-base font-bold text-slate-100 flex items-center">
+                            <i class="fa-solid fa-chart-pie text-blue-400 mr-2"></i>
+                            算定結果サマリー
+                        </h2>
+                        <span class="text-xs text-slate-400">リアルタイム自動試算</span>
+                    </div>
+
+                    <!-- Single column layout for summary metrics -->
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- Normal Daily / Monthly -->
+                        <div class="bg-slate-800/80 rounded-xl p-4 border border-slate-700 flex flex-col justify-between">
+                            <div class="text-xs text-slate-400 font-medium flex justify-between">
+                                <span>通常時 (平日1日) 必要量</span>
+                                <span>1日あたり <span id="resNormalDailyLitres" class="text-white font-bold">0.0</span> L</span>
+                            </div>
+                            <div class="mt-2 pt-2 border-t border-slate-700/60 flex justify-between items-baseline">
+                                <div>
+                                    <div class="text-xs text-slate-300 font-bold">通常時 (平時) 1ヶ月 (30日) 必要量</div>
+                                    <div class="text-2xl font-black text-blue-300 mt-1"><span id="resNormalMonthlyLitres">0.0</span> <span class="text-sm font-normal">L / 月</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Disaster Required Stock -->
+                        <div class="bg-emerald-900/40 rounded-xl p-4 border border-emerald-500/30">
+                            <div class="text-xs text-emerald-300 font-bold flex justify-between">
+                                <span>必要備蓄量</span>
+                                <span id="resDisasterDaysTag" class="bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded text-[11px]">60日分</span>
+                            </div>
+                            <div class="mt-1 flex justify-between items-baseline">
+                                <div class="text-3xl font-black text-emerald-300"><span id="resDisasterLitres">0.0</span> <span class="text-sm font-normal">L</span></div>
+                            </div>
+                            <div id="bottleCountBreakdown" class="mt-2 pt-2 border-t border-emerald-800/60 text-xs text-emerald-200 space-y-1">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISUAL CHARTS & FIRE LAW AREA -->
+                    <div class="grid grid-cols-1 gap-6 pt-4 border-t border-slate-800">
+                        <div>
+                            <div class="text-xs font-bold text-slate-300 mb-2 flex justify-between items-center">
+                                <span>部門別 1日あたり使用量内訳 (L/日)</span>
+                            </div>
+                            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                                <canvas id="consumptionChart" class="max-h-48"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Visual Fire Law Gauge & Alert Block -->
+                        <div id="fireLawAlert" class="bg-slate-800 rounded-xl p-4 border border-slate-700 space-y-3 flex flex-col justify-between">
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-xs">
+                                    <div class="font-bold text-amber-300 flex items-center">
+                                        <i class="fa-solid fa-fire-flame-curved mr-1.5 text-amber-400"></i>
+                                        消防法 危険物規制ステージ
+                                    </div>
+                                    <span id="fireLawBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-slate-300">判定中</span>
+                                </div>
+                                
+                                <!-- Visual Fire Law Storage Meter -->
+                                <div class="space-y-1">
+                                    <div class="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden flex">
+                                        <div id="fireMeterNormal" class="h-full bg-emerald-500 transition-all duration-300" style="width: 20%"></div>
+                                        <div id="fireMeterWarning" class="h-full bg-amber-500 transition-all duration-300" style="width: 80%"></div>
+                                        <div id="fireMeterDanger" class="h-full bg-red-500 transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+                                        <span>0L</span>
+                                        <span>80L (少量届出)</span>
+                                        <span>400L (指定数量)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p id="fireLawText" class="text-xs text-slate-300 leading-relaxed pt-1">
+                                アルコール手指消毒剤（エタノール等60wt%以上）は消防法上の第4類アルコール類に該当します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: REFERENCES -->
+                <section class="bg-white rounded-2xl p-5 sm:p-6 custom-shadow border border-slate-100 space-y-3">
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center">
+                        <i class="fa-solid fa-book-bookmark text-blue-600 mr-2"></i>
+                        参考情報・ガイドライン等
+                    </h2>
+                    <ul class="text-xs text-slate-600 space-y-2 list-disc list-inside">
+                        <li>
+                            厚生労働省：感染症法に基づく医療措置協定等における個人防護具の備蓄について<br>
+                            <a href="https://www.mhlw.go.jp/content/10800000/001271041.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline inline-flex items-center ml-4 mt-0.5">
+                                https://www.mhlw.go.jp/content/10800000/001271041.pdf <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+                            </a>
+                        </li>
+                        <li>
+                            WHO: Guidelines on Hand Hygiene in Health Care<br>
+                            <a href="https://www.who.int/publications/i/item/9789241597906" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline inline-flex items-center ml-4 mt-0.5">
+                                https://www.who.int/publications/i/item/9789241597906 <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+                            </a>
+                        </li>
+                        <li>
+                            東京消防庁：消毒用アルコールは正しく取扱いましょう！<br>
+                            <a href="https://www.tfd.metro.tokyo.lg.jp/lfe/nichijo/arukouru.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline inline-flex items-center ml-4 mt-0.5">
+                                https://www.tfd.metro.tokyo.lg.jp/lfe/nichijo/arukouru.html <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript Calculation Engine -->
+    <script>
+        let myChart = null;
+        let activeBedCategories = {
+            gen: false,
+            icu: false,
+            chr: false,
+            oth: false
+        };
+
+        function addBedCategory(type) {
+            if (type === 'gen') {
+                activeBedCategories.gen = true;
+                const block = document.getElementById('genBedBlock');
+                const btn = document.getElementById('addGenBtn');
+                if (block) block.classList.remove('hidden');
+                if (btn) btn.classList.add('hidden');
+            } else if (type === 'icu') {
+                activeBedCategories.icu = true;
+                const block = document.getElementById('icuBedBlock');
+                const btn = document.getElementById('addIcuBtn');
+                if (block) block.classList.remove('hidden');
+                if (btn) btn.classList.add('hidden');
+            } else if (type === 'chr') {
+                activeBedCategories.chr = true;
+                const block = document.getElementById('chrBedBlock');
+                const btn = document.getElementById('addChrBtn');
+                if (block) block.classList.remove('hidden');
+                if (btn) btn.classList.add('hidden');
+            } else if (type === 'oth') {
+                activeBedCategories.oth = true;
+                const block = document.getElementById('othBedBlock');
+                const btn = document.getElementById('addOthBtn');
+                if (block) block.classList.remove('hidden');
+                if (btn) btn.classList.add('hidden');
+            }
+            calculateStockpile();
+        }
+
+        function removeBedCategory(type) {
+            if (type === 'gen') {
+                activeBedCategories.gen = false;
+                const block = document.getElementById('genBedBlock');
+                const btn = document.getElementById('addGenBtn');
+                if (block) block.classList.add('hidden');
+                if (btn) btn.classList.remove('hidden');
+                const beds = document.getElementById('genBeds');
+                const rate = document.getElementById('genRate');
+                const ops = document.getElementById('genOps');
+                if (beds) beds.value = '';
+                if (rate) rate.value = '';
+                if (ops) ops.value = '';
+            } else if (type === 'icu') {
+                activeBedCategories.icu = false;
+                const block = document.getElementById('icuBedBlock');
+                const btn = document.getElementById('addIcuBtn');
+                if (block) block.classList.add('hidden');
+                if (btn) btn.classList.remove('hidden');
+                const beds = document.getElementById('icuBeds');
+                const rate = document.getElementById('icuRate');
+                const ops = document.getElementById('icuOps');
+                if (beds) beds.value = '';
+                if (rate) rate.value = '';
+                if (ops) ops.value = '';
+            } else if (type === 'chr') {
+                activeBedCategories.chr = false;
+                const block = document.getElementById('chrBedBlock');
+                const btn = document.getElementById('addChrBtn');
+                if (block) block.classList.add('hidden');
+                if (btn) btn.classList.remove('hidden');
+                const beds = document.getElementById('chrBeds');
+                const rate = document.getElementById('chrRate');
+                const ops = document.getElementById('chrOps');
+                if (beds) beds.value = '';
+                if (rate) rate.value = '';
+                if (ops) ops.value = '';
+            } else if (type === 'oth') {
+                activeBedCategories.oth = false;
+                const block = document.getElementById('othBedBlock');
+                const btn = document.getElementById('addOthBtn');
+                if (block) block.classList.add('hidden');
+                if (btn) btn.classList.remove('hidden');
+                const name = document.getElementById('othBedName');
+                const beds = document.getElementById('othBeds');
+                const rate = document.getElementById('othRate');
+                const ops = document.getElementById('othOps');
+                if (name) name.value = 'その他病床';
+                if (beds) beds.value = '';
+                if (rate) rate.value = '';
+                if (ops) ops.value = '';
+            }
+            calculateStockpile();
+        }
+
+        const scenarioNotes = {
+            earthquake: [
+                "・災害拠点病院の指定要件では、食料・飲料水・医薬品等について、流通を通じて適切に供給されるまでに必要な量として、３日分程度の備蓄が示されています。",
+                "・アルコール手指消毒剤については、断水や物流停止の想定、施設の診断継続計画などを踏まえて備蓄日数を設定してください。"
+            ],
+            pandemic: [
+                "・厚生労働省は、医療措置協定で備蓄を定める医療機関について、対象となる個人防護具（PPE）の使用量2か月分以上の備蓄を推奨しています。",
+                "・対象となるPPEは、サージカルマスク、N95マスク、アイソレーションガウン、フェイスシールド、非滅菌手袋です。アルコール手指消毒剤は、この推奨の対象品目に含まれません。",
+                "・アルコール手指消毒剤の備蓄日数は、感染症流行時の使用実績や需要の変化、供給見通しなどを踏まえて設定してください。"
+            ],
+            custom: [
+                "・施設の事業継続計画（BCP）、過去の使用実績、調達先との供給契約などを踏まえて、備蓄対象日数を設定してください。"
+            ]
+        };
+
+        const scenarioReferences = {
+            earthquake: "参考：３日分程度（災害拠点病院の食料・水・医薬品等）",
+            pandemic: "参考：PPEは使用量2か月分以上（アルコール手指消毒剤には直接適応されません）",
+            custom: "参考：施設BCP・使用実績・供給体制に応じて設定"
+        };
+
+        function renderTabs() {
+            const container = document.getElementById('productTabsContainer');
+            if (!container) return;
+
+            let activeCount = 0;
+            for (let i = 1; i <= 5; i++) {
+                const elem = document.querySelector(`[data-product-id="${i}"]`);
+                if (elem && !elem.classList.contains('hidden')) {
+                    activeCount++;
+                }
+            }
+
+            let html = '';
+            if (activeCount < 5) {
+                html += `<button type="button" onclick="addProductTab()" class="px-3 py-1.5 rounded-lg text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-plus text-[10px]"></i> 製品を追加
+                </button>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function addProductTab() {
+            for (let i = 1; i <= 5; i++) {
+                const elem = document.querySelector(`[data-product-id="${i}"]`);
+                if (elem && elem.classList.contains('hidden')) {
+                    elem.classList.remove('hidden');
+                    break;
+                }
+            }
+            renderTabs();
+            calculateStockpile();
+        }
+
+        function removeProduct(productNum) {
+            const elem = document.querySelector(`[data-product-id="${productNum}"]`);
+            if (elem) {
+                elem.classList.add('hidden');
+                // Reset ratio to 0 when removed
+                const ratioInput = document.getElementById(`p${productNum}Ratio`);
+                if (ratioInput) ratioInput.value = '0';
+            }
+            renderTabs();
+            calculateStockpile();
+        }
+
+        function toggleCustomInput(productNum) {
+            const selectVal = document.getElementById(`p${productNum}Type`).value;
+            const customContainer = document.getElementById(`p${productNum}CustomContainer`);
+            if (customContainer) {
+                if (selectVal === 'custom') {
+                    customContainer.classList.remove('hidden');
+                } else {
+                    customContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        function getDosePerOp(productNum) {
+            const selectElem = document.getElementById(`p${productNum}Type`);
+            if (!selectElem) return 3.0 / 1000;
+            const selectVal = selectElem.value;
+            if (selectVal === 'custom') {
+                const customValElem = document.getElementById(`p${productNum}CustomVal`);
+                return (parseFloat(customValElem ? customValElem.value : '2.0') || 2.0) / 1000;
+            }
+            return (parseFloat(selectVal) || 3.0) / 1000;
+        }
+
+        function updateDefaultDays() {
+            const scenario = document.getElementById('disasterType').value;
+            const daysInput = document.getElementById('stockpileDays');
+            const refText = document.getElementById('scenarioReferenceText');
+            
+            if (scenario === 'earthquake') {
+                daysInput.value = 3;
+            } else if (scenario === 'pandemic') {
+                daysInput.value = 60;
+            } else {
+                daysInput.value = 30;
+            }
+
+            if (refText && scenarioReferences[scenario]) {
+                refText.innerText = scenarioReferences[scenario];
+            }
+
+            renderScenarioNotes(scenario);
+            calculateStockpile();
+        }
+
+        function renderScenarioNotes(scenario) {
+            const container = document.getElementById('scenarioNotesContainer');
+            if (!container) return;
+            const notes = scenarioNotes[scenario] || [];
+            container.innerHTML = notes.map(note => `<p class="leading-relaxed">${note}</p>`).join('');
+        }
+
+        function calculateStockpile() {
+            // Products 1 to 5 ratios
+            let rTotal = 0;
+            let ratios = [];
+            for (let i = 1; i <= 5; i++) {
+                const elem = document.querySelector(`[data-product-id="${i}"]`);
+                if (elem && !elem.classList.contains('hidden')) {
+                    const ratioInput = document.getElementById(`p${i}Ratio`);
+                    const r = parseFloat(ratioInput ? ratioInput.value : 0) || 0;
+                    ratios.push(r);
+                    rTotal += r;
+                } else {
+                    ratios.push(0);
+                }
+            }
+            const ratioTotal = Math.round(rTotal);
+
+            const ratioBadge = document.getElementById('ratioTotalBadge');
+            if (ratioBadge) {
+                ratioBadge.innerText = `購入割合合計: ${ratioTotal}%`;
+                if (ratioTotal === 100) {
+                    ratioBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700";
+                } else {
+                    ratioBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300";
+                }
+            }
+
+            // Calculate weighted average dose per operation (in Litres)
+            let avgDosePerOp = 0;
+            for (let i = 1; i <= 5; i++) {
+                const ri = (ratios[i - 1]) / 100;
+                const dosei = getDosePerOp(i);
+                avgDosePerOp += (dosei * ri);
+            }
+
+            // Fallback if sum is 0
+            if (ratioTotal === 0) {
+                avgDosePerOp = 3.0 / 1000;
+            }
+
+            // 1. Inpatient ICU
+            const icuBeds = activeBedCategories.icu ? (parseFloat(document.getElementById('icuBeds')?.value) || 0) : 0;
+            const icuRate = activeBedCategories.icu ? ((parseFloat(document.getElementById('icuRate')?.value) || 0) / 100) : 0;
+            const icuOps = activeBedCategories.icu ? (parseFloat(document.getElementById('icuOps')?.value) || 0) : 0;
+            const icuDailyOps = icuBeds * icuRate * icuOps;
+
+            // General
+            const genBeds = activeBedCategories.gen ? (parseFloat(document.getElementById('genBeds')?.value) || 0) : 0;
+            const genRate = activeBedCategories.gen ? ((parseFloat(document.getElementById('genRate')?.value) || 0) / 100) : 0;
+            const genOps = activeBedCategories.gen ? (parseFloat(document.getElementById('genOps')?.value) || 0) : 0;
+            const genDailyOps = genBeds * genRate * genOps;
+
+            // Chronic
+            const chrBeds = activeBedCategories.chr ? (parseFloat(document.getElementById('chrBeds')?.value) || 0) : 0;
+            const chrRate = activeBedCategories.chr ? ((parseFloat(document.getElementById('chrRate')?.value) || 0) / 100) : 0;
+            const chrOps = activeBedCategories.chr ? (parseFloat(document.getElementById('chrOps')?.value) || 0) : 0;
+            const chrDailyOps = chrBeds * chrRate * chrOps;
+
+            // Other
+            const othBeds = activeBedCategories.oth ? (parseFloat(document.getElementById('othBeds')?.value) || 0) : 0;
+            const othRate = activeBedCategories.oth ? ((parseFloat(document.getElementById('othRate')?.value) || 0) / 100) : 0;
+            const othOps = activeBedCategories.oth ? (parseFloat(document.getElementById('othOps')?.value) || 0) : 0;
+            const othDailyOps = othBeds * othRate * othOps;
+
+            // 2. Outpatient
+            const outCount = parseFloat(document.getElementById('outpatientCount')?.value) || 0;
+            const outEntryOps = parseFloat(document.getElementById('outpatientEntryOps')?.value) || 0;
+            const outCareOps = parseFloat(document.getElementById('outpatientCareOps')?.value) || 0;
+            const outDailyOps = outCount * (outEntryOps + outCareOps);
+
+            // 3. Staff non-care
+            const staffCount = parseFloat(document.getElementById('staffCount')?.value) || 0;
+            const staffOps = parseFloat(document.getElementById('staffOps')?.value) || 0;
+            const staffDailyOps = staffCount * staffOps;
+
+            // Daily Litres per sector using weighted dose
+            const icuLitresDaily = icuDailyOps * avgDosePerOp;
+            const genLitresDaily = genDailyOps * avgDosePerOp;
+            const chrLitresDaily = chrDailyOps * avgDosePerOp;
+            const othLitresDaily = othDailyOps * avgDosePerOp;
+            const outLitresDaily = outDailyOps * avgDosePerOp;
+            const staffLitresDaily = staffDailyOps * avgDosePerOp;
+
+            const totalDailyLitres = icuLitresDaily + genLitresDaily + chrLitresDaily + othLitresDaily + outLitresDaily + staffLitresDaily;
+            const totalMonthlyLitres = totalDailyLitres * 30;
+
+            const days = parseFloat(document.getElementById('stockpileDays')?.value) || 60;
+            const totalDisasterLitres = totalDailyLitres * days;
+
+            // Update UI Summary Elements
+            const elNormalDaily = document.getElementById('resNormalDailyLitres');
+            if (elNormalDaily) elNormalDaily.innerText = totalDailyLitres.toFixed(1);
+
+            const elNormalMonthly = document.getElementById('resNormalMonthlyLitres');
+            if (elNormalMonthly) elNormalMonthly.innerText = totalMonthlyLitres.toFixed(1);
+
+            const elDisasterLitres = document.getElementById('resDisasterLitres');
+            if (elDisasterLitres) elDisasterLitres.innerText = totalDisasterLitres.toFixed(1);
+
+            const elDisasterTag = document.getElementById('resDisasterDaysTag');
+            if (elDisasterTag) elDisasterTag.innerText = `${days}日分想定`;
+
+            // Update Bottle Counts breakdown
+            updateBottleBreakdown(totalDisasterLitres, ratios);
+
+            // Update Fire Law Alert & Visual Gauge
+            updateFireLawNotice(totalDisasterLitres);
+
+            // Render/Update Chart
+            const othNameInput = document.getElementById('othBedName');
+            const othName = (othNameInput && othNameInput.value.trim() !== '') ? othNameInput.value.trim() : 'その他病床';
+            updateChart([icuLitresDaily, genLitresDaily, chrLitresDaily, othLitresDaily, outLitresDaily, staffLitresDaily], othName);
+        }
+
+        function updateBottleBreakdown(totalLitres, ratios) {
+            const container = document.getElementById('bottleCountBreakdown');
+            if (!container) return;
+
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                const elem = document.querySelector(`[data-product-id="${i}"]`);
+                if (elem && !elem.classList.contains('hidden')) {
+                    const ri = (ratios[i - 1] || 0) / 100;
+                    if (ri > 0) {
+                        const nameInput = document.getElementById(`p${i}Name`);
+                        const name = nameInput ? nameInput.value : `製品${i}`;
+                        const volInput = document.getElementById(`p${i}Volume`);
+                        const volMl = parseFloat(volInput ? volInput.value : 1000) || 1000;
+                        const volL = volMl / 1000;
+                        if (volL > 0) {
+                            const bottles = Math.ceil((totalLitres * ri) / volL);
+                            html += `<div class="flex justify-between items-center">
+                                <span>・${name} (${volMl}mL本):</span>
+                                <span class="font-bold text-white">${bottles.toLocaleString()} 本</span>
+                            </div>`;
+                        }
+                    }
+                }
+            }
+            if (html === '') {
+                html = '<div class="text-slate-400 italic">購入割合が設定されている製品はありません</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function updateFireLawNotice(disasterLitres) {
+            const alertText = document.getElementById('fireLawText');
+            const badge = document.getElementById('fireLawBadge');
+            const meterNormal = document.getElementById('fireMeterNormal');
+            const meterWarning = document.getElementById('fireMeterWarning');
+            const meterDanger = document.getElementById('fireMeterDanger');
+
+            if (!alertText) return;
+
+            if (disasterLitres >= 400) {
+                alertText.innerHTML = `<span class="text-red-400 font-bold">【指定数量以上（400L以上）】</span> 備蓄予定量が400L（指定数量）以上です。消防法上の危険物貯蔵所としての危険物施設設置許可および危険物構造・設備の適合基準遵守が必要です。`;
+                if (badge) {
+                    badge.innerText = '指定数量以上 (許可要)';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-500/40';
+                }
+                if (meterNormal) meterNormal.style.width = '20%';
+                if (meterWarning) meterWarning.style.width = '80%';
+                if (meterDanger) meterDanger.style.width = '100%';
+            } else if (disasterLitres >= 80) {
+                const warnWidth = Math.min(100, ((disasterLitres - 80) / (320)) * 100);
+                alertText.innerHTML = `<span class="text-amber-400 font-bold">【少量危険物（80L〜400L未満）】</span> 備蓄予定量が80L以上400L未満です。市町村の火災予防条例に基づく少量危険物貯蔵・取扱いの届出および安全基準の遵守が必要です。`;
+                if (badge) {
+                    badge.innerText = '少量危険物 (届出要)';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+                }
+                if (meterNormal) meterNormal.style.width = '20%';
+                if (meterWarning) meterWarning.style.width = `${20 + warnWidth * 0.8}%`;
+                if (meterDanger) meterDanger.style.width = '0%';
+            } else {
+                const normWidth = Math.min(20, (disasterLitres / 80) * 20);
+                alertText.innerHTML = `備蓄予定量は80L未満（指定数量の1/5未満）です。通常の火気注意のもと保管が可能ですが、直射日光を避け冷暗所で保管してください。`;
+                if (badge) {
+                    badge.innerText = '一般保管可能 (80L未満)';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                }
+                if (meterNormal) meterNormal.style.width = `${normWidth}%`;
+                if (meterWarning) meterWarning.style.width = '0%';
+                if (meterDanger) meterDanger.style.width = '0%';
+            }
+        }
+
+        function updateChart(dataValues, othName = 'その他病床') {
+            const ctx = document.getElementById('consumptionChart')?.getContext('2d');
+            if (!ctx) return;
+
+            const labels = ['ICU/HCU', '一般病床', '療養・精神等', othName, '外来患者', '職員日常'];
+
+            if (myChart) {
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = dataValues;
+                myChart.update();
+            } else {
+                myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: dataValues,
+                            backgroundColor: [
+                                '#3b82f6',
+                                '#06b6d4',
+                                '#10b981',
+                                '#6366f1',
+                                '#f59e0b',
+                                '#8b5cf6'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#1e293b'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#cbd5e1',
+                                    font: { size: 10 },
+                                    boxWidth: 10,
+                                    padding: 8
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        let value = context.parsed || 0;
+                                        return `${label}: ${value.toFixed(2)} L/日`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+        }
+
+        window.onload = function() {
+            renderScenarioNotes('pandemic');
+            renderTabs();
+            for (let i = 1; i <= 5; i++) {
+                toggleCustomInput(i);
+            }
+            calculateStockpile();
+        };
+    </script>
+</body>
+</html>
